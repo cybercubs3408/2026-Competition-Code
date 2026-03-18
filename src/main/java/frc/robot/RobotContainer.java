@@ -134,11 +134,10 @@ public class RobotContainer {
         
         //these are just for testing
         driverXbox.y().whileTrue(generateDriveToTargetCommand(1));
-        driverXbox.rightTrigger().whileTrue(new SetShooterSpeed(drivetrain, m_shooter, false));
-        driverXbox.rightBumper().whileTrue(m_shooter.MagicMotionShoot(50));
-        driverXbox.leftTrigger().whileTrue(new SetTurretPosition(drivetrain, m_turret, false));
-        driverXbox.rightStick().whileTrue(m_turret.GoToPos());
-        driverXbox.leftBumper().whileTrue(m_shooter.Shoot());
+        driverXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
+        driverXbox.rightBumper().whileTrue(new SetShooterSpeed(drivetrain, m_shooter, false));
+        driverXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake());
+        driverXbox.leftBumper().whileTrue(new SetTurretPosition(drivetrain, m_turret, false));
         driverXbox.povLeft().whileTrue(m_turret.TurretCounterClockwise());
         driverXbox.povRight().whileTrue(m_turret.TurrentClockwise());
         driverXbox.a().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));        

@@ -103,7 +103,7 @@ public final class Constants
   public static class TurretConstants
   {
     public static final int kTurretID = 16;
-    public static final double kTurretSpeed = 0.1;
+    public static final double kTurretSpeed = 0.04;
 
     public static final double kS = 0.385; // Add 0.25 V output to overcome static friction
     public static final double kV = 0.30; // A velocity target of 1 rps results in 0.12 V output

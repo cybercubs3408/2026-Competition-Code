@@ -64,30 +64,52 @@ public class SetShootingConditions extends Command {
   @Override
   public void execute() 
   {
-    //MAKE MOTOR LIMIT SWITCH IN PHOENIX TUNER X TO ASSIST IN PREVENTING OVERROTATION
     var allianceColor = DriverStation.getAlliance();
     var currentXPos_r = drivetrain.getState().Pose.getX();
     var currentYPos_r = drivetrain.getState().Pose.getY();
-    robotAngle = -drivetrain.getState().Pose.getRotation().getDegrees();
     
-    var currentXPos_s = currentXPos_r + ShooterConstants.kCenterToShooterDist*Math.cos(robotAngle);
-    var currentYPos_s = currentYPos_r + ShooterConstants.kCenterToShooterDist*Math.sin(robotAngle);
+    robotAngle = drivetrain.getState().Pose.getRotation().getDegrees();
+    double robotAngle_turretOrigin = 0;
 
+    if (robotAngle > 0)
+    {
+      robotAngle_turretOrigin = robotAngle - 180;
+    }
+    else
+    {
+      robotAngle_turretOrigin = robotAngle + 180;
+    }
+
+
+    var currentXPos_s = currentXPos_r + ShooterConstants.kCenterToShooterDist*Math.cos(robotAngle_turretOrigin);
+    var currentYPos_s = currentYPos_r + ShooterConstants.kCenterToShooterDist*Math.sin(robotAngle_turretOrigin);
+
+    var xPos_hubOrigin_blue = currentXPos_s-ShooterConstants.kBlueTargetXCoordinate;
+    var yPos_hubOrigin_blue = currentYPos_s-ShooterConstants.kBlueTargetYCoordinate;
+    var xPos_hubOrigin_red = currentXPos_s-ShooterConstants.kRedTargetXCoordinate;
+    var yPos_hubOrigin_red = currentYPos_s-ShooterConstants.kRedTargetYCoordinate;
 
     currPos_deg = m_turret.m_turretMotor.getPosition().getValueAsDouble()*TurretConstants.kRotationToDegreeRatio;
     
+    
+    
+    System.out.println("xPos " + xPos_hubOrigin_blue);
+    System.out.println("yPos " + yPos_hubOrigin_blue);
+    
+    System.out.println("turret pos " + currPos_deg);
+    System.out.println("robot angle " + robotAngle);
+
+
     if (allianceColor.isPresent()) {
       //blue alliance targets
       if (allianceColor.get() == Alliance.Blue) {
-        fieldAngle = Math.toDegrees(Math.atan2((ShooterConstants.kBlueTargetYCoordinate-currentYPos_s),(ShooterConstants.kBlueTargetXCoordinate-currentXPos_s)));
+        fieldAngle = Math.toDegrees(Math.atan2(-xPos_hubOrigin_blue, yPos_hubOrigin_blue));
       } else {
-        fieldAngle = Math.toDegrees(Math.atan2((currentYPos_s-ShooterConstants.kRedTargetYCoordinate),(currentXPos_s-ShooterConstants.kRedTargetXCoordinate)));
+        fieldAngle = Math.toDegrees(Math.atan2(-xPos_hubOrigin_red, yPos_hubOrigin_red));
       }
     }
-
-    final MotionMagicVoltage m_requestTurret = new MotionMagicVoltage(0);
-
-    targetAngle = robotAngle - fieldAngle;  
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    targetAngle = 90 - fieldAngle + robotAngle_turretOrigin;
 
     if ((targetAngle > 95) || (targetAngle < -95))
     {
@@ -96,7 +118,7 @@ public class SetShootingConditions extends Command {
     
     targetRotations = targetAngle/TurretConstants.kRotationToDegreeRatio;
 
-    m_turret.m_turretMotor.setControl(m_requestTurret.withPosition(targetRotations));
+    m_turret.m_turretMotor.setControl(m_request.withPosition(targetRotations));
 
     //SHOOTER
     double distance = 0; 
@@ -104,9 +126,9 @@ public class SetShootingConditions extends Command {
     if (allianceColor.isPresent()) {
       //blue alliance targets
       if (allianceColor.get() == Alliance.Blue) {
-        distance = Math.sqrt(Math.pow((ShooterConstants.kBlueTargetYCoordinate-currentYPos_s),2)+Math.pow((ShooterConstants.kBlueTargetXCoordinate-currentXPos_s),2));
+        distance = Math.sqrt(Math.pow(xPos_hubOrigin_blue,2)+Math.pow(yPos_hubOrigin_blue,2));
       } else {
-        distance = Math.sqrt(Math.pow((currentYPos_s-ShooterConstants.kRedTargetYCoordinate),2)+Math.pow((currentXPos_s-ShooterConstants.kRedTargetXCoordinate),2));
+        distance = Math.sqrt(Math.pow(xPos_hubOrigin_red,2)+Math.pow(yPos_hubOrigin_red,2));
       }
     }
 
