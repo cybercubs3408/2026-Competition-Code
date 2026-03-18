@@ -1,0 +1,144 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands;
+
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter;
+import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.ShooterConstants;
+import edu.wpi.first.wpilibj.Timer;
+
+
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class SetShootingConditions extends Command {
+  /** Creates a new FindShootingAngle. */
+  CommandSwerveDrivetrain drivetrain;
+  Turret m_turret;
+  Shooter m_shooter;
+  double targetAngle = 0;
+  double robotAngle;
+  double fieldAngle;
+  double motorTarget;
+  boolean useConditional;
+  boolean useTimer;
+  double currPos_deg;
+  double targetRotations;
+  Timer timer = new Timer();
+
+
+  public SetShootingConditions(CommandSwerveDrivetrain drivetrain, Turret turret, Shooter shooter, boolean useConditional, boolean useTimer) 
+  {
+    m_turret = turret;
+    m_shooter = shooter;
+    this.drivetrain = drivetrain;
+    
+    this.useConditional = useConditional;
+    this.useTimer = useTimer;
+
+    //means this command will take priority over others using same subsystem
+    addRequirements(m_turret);
+    addRequirements(m_shooter);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() 
+  {
+    timer.start();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() 
+  {
+    //MAKE MOTOR LIMIT SWITCH IN PHOENIX TUNER X TO ASSIST IN PREVENTING OVERROTATION
+    var allianceColor = DriverStation.getAlliance();
+    var currentXPos_r = drivetrain.getState().Pose.getX();
+    var currentYPos_r = drivetrain.getState().Pose.getY();
+    robotAngle = -drivetrain.getState().Pose.getRotation().getDegrees();
+    
+    var currentXPos_s = currentXPos_r + ShooterConstants.kCenterToShooterDist*Math.cos(robotAngle);
+    var currentYPos_s = currentYPos_r + ShooterConstants.kCenterToShooterDist*Math.sin(robotAngle);
+
+
+    currPos_deg = m_turret.m_turretMotor.getPosition().getValueAsDouble()*TurretConstants.kRotationToDegreeRatio;
+    
+    if (allianceColor.isPresent()) {
+      //blue alliance targets
+      if (allianceColor.get() == Alliance.Blue) {
+        fieldAngle = Math.toDegrees(Math.atan2((ShooterConstants.kBlueTargetYCoordinate-currentYPos_s),(ShooterConstants.kBlueTargetXCoordinate-currentXPos_s)));
+      } else {
+        fieldAngle = Math.toDegrees(Math.atan2((currentYPos_s-ShooterConstants.kRedTargetYCoordinate),(currentXPos_s-ShooterConstants.kRedTargetXCoordinate)));
+      }
+    }
+
+    final MotionMagicVoltage m_requestTurret = new MotionMagicVoltage(0);
+
+    targetAngle = robotAngle - fieldAngle;  
+
+    if ((targetAngle > 95) || (targetAngle < -95))
+    {
+      targetAngle = 0;
+    }
+    
+    targetRotations = targetAngle/TurretConstants.kRotationToDegreeRatio;
+
+    m_turret.m_turretMotor.setControl(m_requestTurret.withPosition(targetRotations));
+
+    //SHOOTER
+    double distance = 0; 
+
+    if (allianceColor.isPresent()) {
+      //blue alliance targets
+      if (allianceColor.get() == Alliance.Blue) {
+        distance = Math.sqrt(Math.pow((ShooterConstants.kBlueTargetYCoordinate-currentYPos_s),2)+Math.pow((ShooterConstants.kBlueTargetXCoordinate-currentXPos_s),2));
+      } else {
+        distance = Math.sqrt(Math.pow((currentYPos_s-ShooterConstants.kRedTargetYCoordinate),2)+Math.pow((currentXPos_s-ShooterConstants.kRedTargetXCoordinate),2));
+      }
+    }
+
+
+
+    double d1 = 2*Math.pow((Math.cos(ShooterConstants.kLaunchAngle_rad)),2);
+    double d2 = ShooterConstants.kHubtoShooterHeight-(Math.tan(ShooterConstants.kLaunchAngle_rad)*distance);
+    double n = (ShooterConstants.kGravity*Math.pow(distance,2));
+    double initialVelo = Math.sqrt((n)/(d1*d2));
+    double targetRPS = ShooterConstants.kSpeedBoostConstant*(initialVelo*2)/(Math.PI*ShooterConstants.kFlywheelDiameter_meters);
+
+    // create a Motion Magic Velocity request, voltage output
+    final MotionMagicVelocityVoltage m_requestShooter = new MotionMagicVelocityVoltage(0);
+
+    // set target velocity to 80 rps
+    m_shooter.m_shooterLeader.setControl(m_requestShooter.withVelocity(targetRPS));
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted)
+  {
+    m_turret.stopTurret();
+    m_shooter.stopShooter();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return (m_turret.m_turretMotor.getMotionMagicAtTarget().getValue() 
+      && m_shooter.m_shooterLeader.getMotionMagicAtTarget().getValue() 
+      && useConditional && (useTimer && (timer.hasElapsed(5.0))));
+    //return ((currPos < targetAngle + TurretConstants.kEps_turret)&&(currPos > targetAngle - TurretConstants.kEps_turret)&& useConditional);
+  }
+}
