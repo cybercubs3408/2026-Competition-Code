@@ -38,14 +38,7 @@ public class SetIntakeAngleDown extends Command {
   public void execute() {
     SmartDashboard.putNumber("Relative Intake Pos", m_intake.m_IntakePositionerMotor.getAbsoluteEncoder().getPosition());
     
-    if (m_intake.m_intakeLimitSwitch.get())
-    {
-      m_intake.stopIntakePositioner();
-    }
-    else 
-    {
-      m_intake.setIntakePositionerSpeed(IntakePositionerConstants.kIntakePositionerSpeed);
-    }
+
   }
     
 

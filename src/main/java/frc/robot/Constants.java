@@ -42,11 +42,11 @@ public final class Constants
     public static final double kRedTargetXCoordinate = 11.919;
     public static final double kRedTargetYCoordinate = 4.029;
 
-    public static final double kLaunchAngle_rad = Math.toRadians(63);
+    public static final double kLaunchAngle_rad = Math.toRadians(73);
     public static final double kHubtoShooterHeight = 1.2712;
     public static final double kGravity = -9.8;
     public static final double kFlywheelDiameter_meters = 0.1;
-    public static final double kSpeedBoostConstant = 1.08;
+    public static final double kSpeedBoostConstant = 0.93;
     public static final double kCenterToShooterDist = 0; //0.229
 
 
@@ -76,19 +76,19 @@ public final class Constants
     public static final double kIntakePositionerSpeed = 0.7;
     public static final double kLowSpeed = 0.2;
     public static final double kSetpoint1 = 0;
-    public static final double kSetpoint2 = 10;
-    public static final double kSetpoint3 = 31;
+    public static final double kSetpoint2 = 3;
+    public static final double kSetpoint3 = 6.2;
     
     public static final double kP = 0.4;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kS = 0; // slot 0 by default
+    public static final double kS = 0.4; // slot 0 by default
     public static final double kV = 0; // slot 0 explicitly
     public static final double kA = 0;
     public static final double kG = 0; // Only use one of kG and kCos
     public static final double kCosRatio = 0;
-    public static final double kCruiseVelocity = 3200; //RPM
-    public static final double kMaxAcceleration = 3200; 
+    public static final double kCruiseVelocity = 4500; //RPM
+    public static final double kMaxAcceleration = 4000; 
     
     public static final double kSlowdown = 5.7;
     public static final double kEps_intakePos = 0.7;

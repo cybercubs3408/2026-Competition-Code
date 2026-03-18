@@ -60,15 +60,20 @@ public class SetTurretPosition extends Command {
     var currentYPos_r = drivetrain.getState().Pose.getY();
     
     robotAngle = drivetrain.getState().Pose.getRotation().getDegrees();
-    double robotAngle_turretOrigin = 0;
+    double robotAngle_turretOrigin = robotAngle;
 
-    if (robotAngle > 0)
-    {
-      robotAngle_turretOrigin = robotAngle - 180;
-    }
-    else
-    {
-      robotAngle_turretOrigin = robotAngle + 180;
+    if (allianceColor.isPresent()) {
+      //blue alliance targets
+      if (allianceColor.get() == Alliance.Blue) {
+        if (robotAngle > 0)
+        {
+          robotAngle_turretOrigin = robotAngle - 180;
+        }
+        else
+        {
+          robotAngle_turretOrigin = robotAngle + 180;
+        }
+      }
     }
 
 
@@ -84,8 +89,8 @@ public class SetTurretPosition extends Command {
     
     
     
-    System.out.println("xPos " + xPos_hubOrigin_blue);
-    System.out.println("yPos " + yPos_hubOrigin_blue);
+    System.out.println("xPos " + xPos_hubOrigin_red);
+    System.out.println("yPos " + yPos_hubOrigin_red);
     
     System.out.println("turret pos " + currPos_deg);
     System.out.println("robot angle " + robotAngle);
@@ -96,11 +101,19 @@ public class SetTurretPosition extends Command {
       if (allianceColor.get() == Alliance.Blue) {
         fieldAngle = Math.toDegrees(Math.atan2(-xPos_hubOrigin_blue, yPos_hubOrigin_blue));
       } else {
-        fieldAngle = Math.toDegrees(Math.atan2(-xPos_hubOrigin_red, yPos_hubOrigin_red));
+        fieldAngle = Math.toDegrees(Math.atan2(xPos_hubOrigin_red, yPos_hubOrigin_red));
       }
     }
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    targetAngle = 90-fieldAngle + robotAngle_turretOrigin;
+    
+    if (allianceColor.isPresent()) {
+      //blue alliance targets
+      if (allianceColor.get() == Alliance.Blue) {
+        targetAngle = 90-fieldAngle + robotAngle_turretOrigin;
+      } else {
+        targetAngle = fieldAngle-90 + robotAngle_turretOrigin;
+      }
+    }
 
     if ((targetAngle > 95) || (targetAngle < -95))
     {

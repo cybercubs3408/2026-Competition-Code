@@ -64,11 +64,8 @@ public class IntakePositioner extends SubsystemBase {
         .d(IntakePositionerConstants.kD)
         .outputRange(-1, 1)
         .feedForward
-            .kS(IntakePositionerConstants.kS) // slot 0 by default
-            .kV(IntakePositionerConstants.kV, ClosedLoopSlot.kSlot0) // slot 0 explicitly
-            .kA(IntakePositionerConstants.kA)
-            .kG(IntakePositionerConstants.kG) // Only use one of kG and kCos
-            .kCosRatio(IntakePositionerConstants.kCosRatio);
+            .kS(IntakePositionerConstants.kS); // slot 0 by default
+
 
     motorConfig.closedLoop.maxMotion
         // Set MAXMotion parameters for position control. We don't need to pass

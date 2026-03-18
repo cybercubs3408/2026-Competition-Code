@@ -81,11 +81,14 @@ public class RobotContainer {
         //need to figure out how to keep flywheel running after command ends
         NamedCommands.registerCommand("SetShootingConditions", new SetShootingConditions(drivetrain, m_turret, m_shooter, true, true));
         NamedCommands.registerCommand("FeedToShooter", m_hopper_kicker.Intake());
+        NamedCommands.registerCommand("DeployIntake", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, true));
+        NamedCommands.registerCommand("IntakeBalls", m_intakeWheel.Intake());
+        /* 
         NamedCommands.registerCommand("SetClimber_Pos2", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint2));
         NamedCommands.registerCommand("SetClimber_Pos3", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint3));
         NamedCommands.registerCommand("EngageRatchets", m_climber.EngageServo());
         NamedCommands.registerCommand("DisengageRatchets", m_climber.DisengageServo());
-
+        */
         autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
@@ -221,7 +224,7 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         // Simple drive forward auton
-
+        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero));
         //return new PathPlannerAuto("Example Auto");
         return autoChooser.getSelected();
         
