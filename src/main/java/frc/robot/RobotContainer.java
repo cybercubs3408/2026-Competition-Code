@@ -34,11 +34,8 @@ import com.pathplanner.lib.path.PathConstraints;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.Hopper_KickerConstants;
 import frc.robot.Constants.IntakePositionerConstants;
-import frc.robot.commands.SetClimberPosition;
 import frc.robot.commands.SetIntakeAngle_MAXMotion;
-import frc.robot.commands.SetShooterSpeed;
 import frc.robot.commands.SetShootingConditions;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.IntakeWheel;
@@ -53,7 +50,6 @@ public class RobotContainer {
     Hopper_Kicker m_hopper_kicker = new Hopper_Kicker();
     IntakeWheel m_intakeWheel = new IntakeWheel();
     Turret m_turret = new Turret();
-    Climber m_climber = new Climber();
     IntakePositioner m_intakePositioner = new IntakePositioner();
     
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -79,10 +75,13 @@ public class RobotContainer {
         //NAMED COMMANDS HERE FOR PATHPLANNER
 
         //need to figure out how to keep flywheel running after command ends
-        NamedCommands.registerCommand("SetShootingConditions", new SetShootingConditions(drivetrain, m_turret, m_shooter, true, true));
+        NamedCommands.registerCommand("SetShootingConditions", new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
+        NamedCommands.registerCommand("SetShootingConditions_noTimer", new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
         NamedCommands.registerCommand("FeedToShooter", m_hopper_kicker.Intake());
-        NamedCommands.registerCommand("DeployIntake", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, true));
+        NamedCommands.registerCommand("DeployIntake", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, false));
+        NamedCommands.registerCommand("DeployIntake_Halfway", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint2, false));
         NamedCommands.registerCommand("IntakeBalls", m_intakeWheel.Intake());
+        NamedCommands.registerCommand("FeedToShooter_onTimer", m_hopper_kicker.Intake());
         /* 
         NamedCommands.registerCommand("SetClimber_Pos2", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint2));
         NamedCommands.registerCommand("SetClimber_Pos3", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint3));
@@ -136,25 +135,29 @@ public class RobotContainer {
 
         
         //these are just for testing
-        driverXbox.y().whileTrue(generateDriveToTargetCommand(1));
+        driverXbox.x().onTrue(m_turret.GoToPos(0));
         driverXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
-        driverXbox.rightBumper().whileTrue(new SetShooterSpeed(drivetrain, m_shooter, false));
+        driverXbox.rightBumper().whileTrue(Commands.parallel(m_turret.GoToPos(0), m_shooter.MagicMotionShoot(50)));
+        //driverXbox.rightBumper().whileTrue(new SetShooterSpeed(drivetrain, m_shooter, false));
         driverXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake());
-        driverXbox.leftBumper().whileTrue(new SetTurretPosition(drivetrain, m_turret, false));
-        driverXbox.povLeft().whileTrue(m_turret.TurretCounterClockwise());
-        driverXbox.povRight().whileTrue(m_turret.TurrentClockwise());
-        driverXbox.a().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));        
-        driverXbox.back().whileTrue(new SetClimberPosition(m_climber, ClimberConstants.kSetpoint1, false));
-        driverXbox.x().onTrue(m_climber.EngageServo());
-        driverXbox.b().onTrue(m_climber.DisengageServo());
-        driverXbox.povUp().whileTrue(m_climber.ClimbForward());
-        driverXbox.povDown().whileTrue(m_climber.ClimbBackward());
-        driverXbox.back().whileTrue(m_turret.OutputTurretPos());
+        //driverXbox.leftBumper().whileTrue(new SetTurretPosition(drivetrain, m_turret, false));
+        driverXbox.leftBumper().whileTrue(m_intakeWheel.Intake());
+        //driverXbox.povLeft().whileTrue(m_turret.TurretCounterClockwise());
+        //driverXbox.povRight().whileTrue(m_turret.TurrentClockwise());
+        
+        driverXbox.b().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driverXbox.y().whileTrue(m_intakePositioner.IntakePosUp(IntakePositionerConstants.kIntakePositionerSpeed));
+        driverXbox.a().whileTrue(m_intakePositioner.IntakePosDown(IntakePositionerConstants.kIntakePositionerSpeed));        
+        driverXbox.back().whileTrue(m_hopper_kicker.Outake());
+        driverXbox.povUp().onTrue(new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint1, false));
+        driverXbox.povRight().onTrue(new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint2, false));
+        driverXbox.povDown().onTrue(new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, false));
+
 
 
         mechXbox.x().whileTrue(m_turret.TurretCounterClockwise());
         mechXbox.b().whileTrue(m_turret.TurrentClockwise());
-        mechXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake());
+        //mechXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake());
         mechXbox.leftBumper().whileTrue(m_intakeWheel.Intake());
         mechXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
         mechXbox.y().whileTrue(m_intakePositioner.IntakePosUp(IntakePositionerConstants.kIntakePositionerSpeed));
@@ -164,10 +167,18 @@ public class RobotContainer {
         mechXbox.povRight().onTrue(new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint2, false));
         //mechXbox.povDown().onTrue(new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, false));
         mechXbox.povDown().onTrue(m_intakePositioner.IntakePosDown(IntakePositionerConstants.kLowSpeed));
-
+/* 
+        mechXbox.x().whileTrue(m_turret.GoToPos(-40));
+        mechXbox.y().whileTrue(m_turret.GoToPos(0));
+        mechXbox.b().whileTrue(m_turret.GoToPos(40));
+*/
 
 
 /*
+        driverXbox.povUp().whileTrue(m_climber.ClimbForward());
+        driverXbox.povDown().whileTrue(m_climber.ClimbBackward());
+        driverXbox.x().onTrue(m_climber.EngageServo());
+        driverXbox.b().onTrue(m_climber.DisengageServo());
         mechXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, true, false).andThen(Commands.parallel(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false) , m_hopper_kicker.Intake())));
         mechXbox.leftTrigger().whileTrue(m_intakeWheel.Intake());
         mechXbox.povUp().onTrue(new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint1, false));

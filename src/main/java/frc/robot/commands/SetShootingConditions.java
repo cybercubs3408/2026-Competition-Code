@@ -124,7 +124,7 @@ public class SetShootingConditions extends Command {
       }
     }
 
-    if ((targetAngle > 95) || (targetAngle < -95))
+    if ((targetAngle > 60) || (targetAngle < -60))
     {
       targetAngle = 0;
     }
@@ -173,7 +173,7 @@ public class SetShootingConditions extends Command {
   public boolean isFinished() {
     return (m_turret.m_turretMotor.getMotionMagicAtTarget().getValue() 
       && m_shooter.m_shooterLeader.getMotionMagicAtTarget().getValue() 
-      && useConditional && (useTimer && (timer.hasElapsed(3.0))));
+      && useConditional && (useTimer && (timer.hasElapsed(5.0))));
     //return ((currPos < targetAngle + TurretConstants.kEps_turret)&&(currPos > targetAngle - TurretConstants.kEps_turret)&& useConditional);
   }
 }

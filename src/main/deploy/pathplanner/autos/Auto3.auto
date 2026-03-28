@@ -5,15 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartToShoot(Auto2&3)"
-          }
-        },
-        {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake_Halfway"
+                }
+              },
               {
                 "type": "named",
                 "data": {
@@ -21,53 +21,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "FeedToShooter"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "DeployIntake"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeBalls"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ShootToIntake(Auto3)"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "SetShootingConditions"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FeedToShooter"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "StartToShoot(Auto3)"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedToShooter"
+                      }
+                    }
+                  ]
                 }
               }
             ]

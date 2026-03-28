@@ -46,7 +46,7 @@ public final class Constants
     public static final double kHubtoShooterHeight = 1.2712;
     public static final double kGravity = -9.8;
     public static final double kFlywheelDiameter_meters = 0.1;
-    public static final double kSpeedBoostConstant = 0.93;
+    public static final double kSpeedBoostConstant = 0.97;
     public static final double kCenterToShooterDist = 0; //0.229
 
 
@@ -73,11 +73,11 @@ public final class Constants
   public static class IntakePositionerConstants
   {
     public static final int kIntakePositionerID = 18;
-    public static final double kIntakePositionerSpeed = 0.7;
-    public static final double kLowSpeed = 0.2;
+    public static final double kIntakePositionerSpeed = 0.85;
+    public static final double kLowSpeed = 0.1;
     public static final double kSetpoint1 = 0;
-    public static final double kSetpoint2 = 3;
-    public static final double kSetpoint3 = 6.2;
+    public static final double kSetpoint2 = 2.75;
+    public static final double kSetpoint3 = 6.4;
     
     public static final double kP = 0.4;
     public static final double kI = 0;
@@ -103,13 +103,13 @@ public final class Constants
   public static class TurretConstants
   {
     public static final int kTurretID = 16;
-    public static final double kTurretSpeed = 0.04;
+    public static final double kTurretSpeed = 0.12;
 
     public static final double kS = 0.385; // Add 0.25 V output to overcome static friction
     public static final double kV = 0.30; // A velocity target of 1 rps results in 0.12 V output
     public static final double kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
 
-    public static final double kP = 1.5; // A position error of 2.5 rotations results in 12 V output
+    public static final double kP = 1.25; // A position error of 2.5 rotations results in 12 V output
     public static final double kI = 0; // no output for integrated error
     public static final double kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
     public static final double kTargetCruiseVelo = 10; //RPS 

@@ -1,0 +1,63 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake_Halfway"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SetShootingConditions"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "StartToShoot(Auto1)"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedToShooter_onTimer"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "ShootToIntake(Auto6)"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedToShooter_onTimer"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -5,15 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartToShoot(Auto1)"
-          }
-        },
-        {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake_Halfway"
+                }
+              },
               {
                 "type": "named",
                 "data": {
@@ -21,9 +21,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "FeedToShooter"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "StartToShoot(Auto1)"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedToShooter"
+                      }
+                    }
+                  ]
                 }
               }
             ]

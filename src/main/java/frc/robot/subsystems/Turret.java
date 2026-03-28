@@ -96,7 +96,7 @@ public class Turret extends SubsystemBase {
   }
 
 
-    public Command GoToPos() {
+    public Command GoToPos(double positionInDeg) {
     // The startEnd helper method takes a method to call when the command is initialized and one to
     // call when it ends
     return this.startEnd(
@@ -105,7 +105,7 @@ public class Turret extends SubsystemBase {
           final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     
-    m_turretMotor.setControl(m_request.withPosition(4));
+    m_turretMotor.setControl(m_request.withPosition(positionInDeg/TurretConstants.kRotationToDegreeRatio));
     System.out.println(m_turretMotor.getPosition().getValueAsDouble());
         },
         // When the command stops, stop the wheels
@@ -128,5 +128,10 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void initDefaultCommand()
+  {
+    setDefaultCommand(GoToPos(0));
   }
 }

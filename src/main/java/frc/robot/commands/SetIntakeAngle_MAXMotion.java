@@ -57,6 +57,7 @@ public class SetIntakeAngle_MAXMotion extends Command {
   @Override
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
-    return ((m_intake.m_IntakePositionerMotor.getAbsoluteEncoder().getPosition() < setpoint + IntakePositionerConstants.kEps_intakePos)&&(m_intake.m_IntakePositionerMotor.getAbsoluteEncoder().getPosition() > setpoint - IntakePositionerConstants.kEps_intakePos)&& inAuto);
+    
+    return ((m_intake.m_IntakePositionerMotor.getEncoder().getPosition() < setpoint + IntakePositionerConstants.kEps_intakePos)&&(m_intake.m_IntakePositionerMotor.getEncoder().getPosition() > setpoint - IntakePositionerConstants.kEps_intakePos)&& inAuto);
   }
 }
