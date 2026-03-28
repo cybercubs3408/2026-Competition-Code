@@ -74,7 +74,7 @@ public final class Constants
   {
     public static final int kIntakePositionerID = 18;
     public static final double kIntakePositionerSpeed = 0.85;
-    public static final double kLowSpeed = 0.1;
+    public static final double kLowSpeed = 0;  
     public static final double kSetpoint1 = 0;
     public static final double kSetpoint2 = 2.75;
     public static final double kSetpoint3 = 6.4;
