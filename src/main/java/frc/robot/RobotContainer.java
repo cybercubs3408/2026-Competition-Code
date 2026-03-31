@@ -34,6 +34,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.Hopper_KickerConstants;
 import frc.robot.Constants.IntakePositionerConstants;
+import frc.robot.commands.RunKickerOnTimer;
 import frc.robot.commands.SetIntakeAngle_MAXMotion;
 import frc.robot.commands.SetShootingConditions;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -81,7 +82,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("DeployIntake", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, false));
         NamedCommands.registerCommand("DeployIntake_Halfway", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint2, false));
         NamedCommands.registerCommand("IntakeBalls", m_intakeWheel.Intake());
-        NamedCommands.registerCommand("FeedToShooter_onTimer", m_hopper_kicker.Intake());
+        NamedCommands.registerCommand("FeedToShooter_onTimer", new RunKickerOnTimer(m_hopper_kicker));
         /* 
         NamedCommands.registerCommand("SetClimber_Pos2", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint2));
         NamedCommands.registerCommand("SetClimber_Pos3", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint3));

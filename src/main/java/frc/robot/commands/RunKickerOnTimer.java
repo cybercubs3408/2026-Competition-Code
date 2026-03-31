@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Hopper_KickerConstants;
 import frc.robot.Constants.IntakePositionerConstants;
 import frc.robot.subsystems.Hopper_Kicker;
 import frc.robot.subsystems.IntakePositioner;
@@ -34,13 +35,14 @@ public class RunKickerOnTimer extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.reset();
     timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_hopper_kicker.Intake();
+    m_hopper_kicker.setSpeeds(-Hopper_KickerConstants.kHopperSpeed, -Hopper_KickerConstants.kKickerSpeed);
   }
     
 
@@ -55,6 +57,6 @@ public class RunKickerOnTimer extends Command {
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
     
-    return (timer.hasElapsed(5.0));
+    return (timer.hasElapsed(4.0));
   }
 }
