@@ -55,6 +55,8 @@ public class RobotContainer {
     
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    
+
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -72,6 +74,8 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
+    
+
     public RobotContainer() {
         //NAMED COMMANDS HERE FOR PATHPLANNER
 
@@ -82,7 +86,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("DeployIntake", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint3, false));
         NamedCommands.registerCommand("DeployIntake_Halfway", new SetIntakeAngle_MAXMotion(m_intakePositioner, IntakePositionerConstants.kSetpoint2, false));
         NamedCommands.registerCommand("IntakeBalls", m_intakeWheel.Intake());
-        NamedCommands.registerCommand("FeedToShooter_onTimer", new RunKickerOnTimer(m_hopper_kicker));
+        NamedCommands.registerCommand("FeedToShooter_onTimer", new RunKickerOnTimer(m_hopper_kicker, 3.5));
+        NamedCommands.registerCommand("FeedToShooter_5sec", new RunKickerOnTimer(m_hopper_kicker, 5));
+
         /* 
         NamedCommands.registerCommand("SetClimber_Pos2", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint2));
         NamedCommands.registerCommand("SetClimber_Pos3", m_climber.ClimbToSetpoint(ClimberConstants.kSetpoint3));
@@ -109,7 +115,11 @@ public class RobotContainer {
                     .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-
+/**
+     * Dynamically calculates a speed multiplier.
+     * Returns 0.5 (50%) if intake buttons are held, otherwise 1.0 (100%).
+     */
+    
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -160,7 +170,8 @@ public class RobotContainer {
         mechXbox.b().whileTrue(m_turret.TurrentClockwise());
         //mechXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake());
         mechXbox.leftBumper().whileTrue(m_intakeWheel.Intake());
-        mechXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
+        //mechXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
+        mechXbox.rightTrigger().whileTrue(m_hopper_kicker.Outake());
         mechXbox.y().whileTrue(m_intakePositioner.IntakePosUp(IntakePositionerConstants.kIntakePositionerSpeed));
         mechXbox.a().whileTrue(m_intakePositioner.IntakePosDown(IntakePositionerConstants.kIntakePositionerSpeed));
         //mechXbox.a().whileTrue(new SetIntakeAngleDown(m_intakePositioner, false));

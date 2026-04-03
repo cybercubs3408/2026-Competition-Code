@@ -21,12 +21,14 @@ import frc.robot.subsystems.IntakePositioner;
 public class RunKickerOnTimer extends Command {
   Hopper_Kicker m_hopper_kicker;
   Timer timer = new Timer();
+  double timeToShoot;
 
 
   /** Creates a new Command. */
-  public RunKickerOnTimer(Hopper_Kicker hopper_kicker) {
+  public RunKickerOnTimer(Hopper_Kicker hopper_kicker, double timeToShoot) {
     
     this.m_hopper_kicker = hopper_kicker;
+    this.timeToShoot = timeToShoot;
     //means this command will take priority over others using same subsystem
     addRequirements(m_hopper_kicker);
     
@@ -57,6 +59,6 @@ public class RunKickerOnTimer extends Command {
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
     
-    return (timer.hasElapsed(4.0));
+    return (timer.hasElapsed(timeToShoot));
   }
 }

@@ -15,6 +15,7 @@ import frc.robot.Constants.IntakeWheelConstants;;
 public class IntakeWheel extends SubsystemBase {
   /** Creates a new Kicker. */
   public SparkMax m_intakeMotor;
+  public boolean intaking;
 
   public IntakeWheel() 
   {
@@ -36,10 +37,12 @@ public class IntakeWheel extends SubsystemBase {
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
           setSpeed(-IntakeWheelConstants.kIntakeWheelSpeed);
+          intaking = true;
         },
         // When the command stops, stop the wheels
         () -> {
           stop();
+          intaking = false;
         });
   }
 
