@@ -64,16 +64,17 @@ public final class Constants
 
   public static class Hopper_KickerConstants
   {
-    public static final int kKickerID = 20;
+    public static final int kKickerID = 22;
     public static final int kHopperID = 19;
     public static final double kHopperSpeed = 0.8;
-    public static final double kKickerSpeed = 0.8;
+    public static final double kKickerSpeed = 1.0;
+    public static final double kKickerSlowSpeed = 0.9;
   }
 
   public static class IntakePositionerConstants
   {
     public static final int kIntakePositionerID = 18;
-    public static final double kIntakePositionerSpeed = 0.85;
+    public static final double kIntakePositionerSpeed = 0.15;
     public static final double kLowSpeed = 0;  
     public static final double kSetpoint1 = 0;
     public static final double kSetpoint2 = 6;

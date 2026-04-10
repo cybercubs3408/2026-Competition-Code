@@ -170,6 +170,7 @@ public class RobotContainer {
         mechXbox.b().whileTrue(m_turret.TurrentClockwise());
         //mechXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake());
         mechXbox.leftBumper().whileTrue(m_intakeWheel.Intake());
+        mechXbox.leftTrigger().whileTrue(m_hopper_kicker.Intake80Percent());
         //mechXbox.rightTrigger().whileTrue(new SetShootingConditions(drivetrain, m_turret, m_shooter, false, false));
         mechXbox.rightTrigger().whileTrue(m_hopper_kicker.Outake());
         mechXbox.y().whileTrue(m_intakePositioner.IntakePosUp(IntakePositionerConstants.kIntakePositionerSpeed));

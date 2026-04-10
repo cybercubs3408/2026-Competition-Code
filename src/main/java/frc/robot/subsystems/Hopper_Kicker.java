@@ -46,6 +46,20 @@ public class Hopper_Kicker extends SubsystemBase {
         });
   }
 
+    public Command Intake80Percent() {
+    // The startEnd helper method takes a method to call when the command is initialized and one to
+    // call when it ends
+    return this.startEnd(
+        // When the command is initialized, set the wheels to the intake speed values
+        () -> {
+          setSpeeds(-Hopper_KickerConstants.kHopperSpeed, -Hopper_KickerConstants.kKickerSlowSpeed);
+        },
+        // When the command stops, stop the wheels
+        () -> {
+          stop();
+        });
+  }
+
   public Command Outake() {
     // The startEnd helper method takes a method to call when the command is initialized and one to
     // call when it ends

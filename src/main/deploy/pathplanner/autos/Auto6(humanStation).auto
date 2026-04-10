@@ -11,12 +11,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "DeployIntake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "SetShootingConditions"
                 }
               },
@@ -25,9 +19,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "race",
                       "data": {
-                        "pathName": "StartToShoot(Auto1)"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "StartToShoot(Auto1)"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "DeployIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -55,9 +62,22 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "parallel",
                       "data": {
-                        "name": "FeedToShooter"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "FeedToShooter"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "DeployIntake_Halfway"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
